@@ -3,22 +3,22 @@
 提供Gradio Web界面，用户可以输入主题，系统自动完成研究、写作、审核、编辑全流程
 """
 
-import os
 import asyncio
-from typing import Dict, Any, Optional
+import os
+from typing import Any
+
 import gradio as gr
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 
-from graph.workflow import create_workflow, create_initial_state, WorkflowConfig
+from graph.workflow import WorkflowConfig, create_initial_state, create_workflow
 from utils.helpers import (
-    format_research_notes,
     count_words,
-    extract_title,
-    generate_summary,
-    save_to_file,
-    get_timestamp,
     ensure_directory,
+    extract_title,
+    format_research_notes,
+    get_timestamp,
+    save_to_file,
 )
 
 # 加载环境变量
@@ -31,7 +31,7 @@ class MultiAgentWritingSystem:
     整合研究、写作、审核、编辑四个智能体，完成完整的写作流程
     """
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         """
         初始化系统
 
@@ -92,7 +92,7 @@ class MultiAgentWritingSystem:
         topic: str,
         max_iterations: int = 3,
         progress_callback=None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         运行写作任务
 
@@ -142,7 +142,7 @@ class MultiAgentWritingSystem:
             "metadata": final_state.get("metadata", {}),
         }
 
-    def _save_result(self, state: Dict[str, Any]) -> str:
+    def _save_result(self, state: dict[str, Any]) -> str:
         """
         保存结果到文件
 

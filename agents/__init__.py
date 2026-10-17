@@ -4,15 +4,15 @@
 """
 
 from .base_agent import BaseAgent
-from .researcher import ResearchAgent
-from .writer import WriterAgent
-from .reviewer import ReviewerAgent
 from .editor import EditorAgent
+from .researcher import ResearchAgent
+from .reviewer import ReviewerAgent
+from .writer import WriterAgent
 
 __all__ = [
     "BaseAgent",
-    "ResearchAgent",
-    "WriterAgent",
-    "ReviewerAgent",
     "EditorAgent",
+    "ResearchAgent",
+    "ReviewerAgent",
+    "WriterAgent",
 ]

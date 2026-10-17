@@ -3,9 +3,10 @@
 负责收集信息、进行研究，为写作提供素材和参考
 """
 
-from typing import List
+
 from langchain_core.language_models import BaseChatModel
-from .base_agent import BaseAgent, AgentState
+
+from .base_agent import AgentState, BaseAgent
 
 
 class ResearchAgent(BaseAgent):
@@ -95,7 +96,7 @@ class ResearchAgent(BaseAgent):
 
         return state
 
-    def _parse_research_notes(self, response: str) -> List[str]:
+    def _parse_research_notes(self, response: str) -> list[str]:
         """
         解析研究笔记
 

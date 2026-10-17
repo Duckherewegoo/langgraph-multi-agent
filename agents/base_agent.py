@@ -4,7 +4,8 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from pydantic import BaseModel, Field
@@ -13,14 +14,14 @@ from pydantic import BaseModel, Field
 class AgentState(BaseModel):
     """智能体状态模型"""
     topic: str = Field(description="写作主题")
-    research_notes: List[str] = Field(default_factory=list, description="研究笔记")
+    research_notes: list[str] = Field(default_factory=list, description="研究笔记")
     draft_content: str = Field(default="", description="草稿内容")
     review_feedback: str = Field(default="", description="审核反馈")
     final_content: str = Field(default="", description="最终内容")
     current_step: str = Field(default="research", description="当前步骤")
     iteration_count: int = Field(default=0, description="迭代次数")
     max_iterations: int = Field(default=3, description="最大迭代次数")
-    metadata: Dict[str, Any] = Field(default_factory=dict, description="元数据")
+    metadata: dict[str, Any] = Field(default_factory=dict, description="元数据")
 
 
 class BaseAgent(ABC):
@@ -34,7 +35,7 @@ class BaseAgent(ABC):
         llm: BaseChatModel,
         name: str,
         description: str,
-        system_prompt: Optional[str] = None,
+        system_prompt: str | None = None,
     ):
         """
         初始化基础智能体
@@ -57,8 +58,8 @@ class BaseAgent(ABC):
     def _build_messages(
         self,
         human_message: str,
-        context: Optional[Dict[str, Any]] = None,
-    ) -> List[BaseMessage]:
+        context: dict[str, Any] | None = None,
+    ) -> list[BaseMessage]:
         """
         构建消息列表
 
@@ -82,7 +83,7 @@ class BaseAgent(ABC):
 
     async def _call_llm(
         self,
-        messages: List[BaseMessage],
+        messages: list[BaseMessage],
         **kwargs,
     ) -> str:
         """
@@ -109,7 +110,6 @@ class BaseAgent(ABC):
         Returns:
             更新后的状态
         """
-        pass
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} name={self.name}>"

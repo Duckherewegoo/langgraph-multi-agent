@@ -3,9 +3,9 @@
 使用LangGraph定义多智能体协作流程
 """
 
-from .workflow import create_workflow, WorkflowConfig
+from .workflow import WorkflowConfig, create_workflow
 
 __all__ = [
-    "create_workflow",
     "WorkflowConfig",
+    "create_workflow",
 ]

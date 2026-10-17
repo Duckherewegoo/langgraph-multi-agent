@@ -5,11 +5,10 @@
 
 import json
 import os
-from typing import List, Optional
 from datetime import datetime
 
 
-def format_research_notes(notes: List[str]) -> str:
+def format_research_notes(notes: list[str]) -> str:
     """
     格式化研究笔记为易读的字符串
 
@@ -49,7 +48,7 @@ def count_words(text: str) -> int:
     return chinese_chars + english_words
 
 
-def extract_title(content: str) -> Optional[str]:
+def extract_title(content: str) -> str | None:
     """
     从文章内容中提取标题
 

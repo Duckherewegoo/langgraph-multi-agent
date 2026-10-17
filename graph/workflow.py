@@ -3,96 +3,17 @@
 使用LangGraph构建多智能体协作写作工作流
 """
 
-from typing import Dict, Any, Optional, TypedDict, Annotated
-from langchain_core.language_models import BaseChatModel
-from langgraph.graph import StateGraph, END
-from langgraph.graph.message import add_messages
-from pydantic import BaseModel, Field
+from langgraph.graph import END, StateGraph
 
-from agents.base_agent import AgentState
-from agents.researcher import ResearchAgent
-from agents.writer import WriterAgent
-from agents.reviewer import ReviewerAgent
 from agents.editor import EditorAgent
+from agents.researcher import ResearchAgent
+from agents.reviewer import ReviewerAgent
+from agents.writer import WriterAgent
 
-
-class WorkflowConfig(BaseModel):
-    """工作流配置"""
-    llm: BaseChatModel = Field(description="语言模型实例")
-    max_iterations: int = Field(default=3, description="最大迭代次数")
-    researcher_config: Optional[Dict[str, Any]] = Field(
-        default=None, description="研究智能体配置"
-    )
-    writer_config: Optional[Dict[str, Any]] = Field(
-        default=None, description="写作智能体配置"
-    )
-    reviewer_config: Optional[Dict[str, Any]] = Field(
-        default=None, description="审核智能体配置"
-    )
-    editor_config: Optional[Dict[str, Any]] = Field(
-        default=None, description="编辑智能体配置"
-    )
-
-
-class WorkflowState(TypedDict):
-    """工作流状态类型"""
-    topic: str
-    research_notes: list
-    draft_content: str
-    review_feedback: str
-    final_content: str
-    current_step: str
-    iteration_count: int
-    max_iterations: int
-    metadata: dict
-
-
-def _state_to_agent_state(state: WorkflowState) -> AgentState:
-    """
-    将工作流状态转换为智能体状态
-
-    Args:
-        state: 工作流状态
-
-    Returns:
-        智能体状态
-    """
-    return AgentState(
-        topic=state.get("topic", ""),
-        research_notes=state.get("research_notes", []),
-        draft_content=state.get("draft_content", ""),
-        review_feedback=state.get("review_feedback", ""),
-        final_content=state.get("final_content", ""),
-        current_step=state.get("current_step", "research"),
-        iteration_count=state.get("iteration_count", 0),
-        max_iterations=state.get("max_iterations", 3),
-        metadata=state.get("metadata", {}),
-    )
-
-
-def _agent_state_to_state(agent_state: AgentState, state: WorkflowState) -> WorkflowState:
-    """
-    将智能体状态更新到工作流状态
-
-    Args:
-        agent_state: 智能体状态
-        state: 原始工作流状态
-
-    Returns:
-        更新后的工作流状态
-    """
-    return {
-        **state,
-        "topic": agent_state.topic,
-        "research_notes": agent_state.research_notes,
-        "draft_content": agent_state.draft_content,
-        "review_feedback": agent_state.review_feedback,
-        "final_content": agent_state.final_content,
-        "current_step": agent_state.current_step,
-        "iteration_count": agent_state.iteration_count,
-        "max_iterations": agent_state.max_iterations,
-        "metadata": agent_state.metadata,
-    }
+from .config import WorkflowConfig
+from .helper import agent_state_to_state as _agent_state_to_state
+from .helper import state_to_agent_state as _state_to_agent_state
+from .state import WorkflowState
 
 
 def create_workflow(config: WorkflowConfig):
@@ -203,30 +124,3 @@ def create_workflow(config: WorkflowConfig):
     compiled_workflow = workflow.compile()
 
     return compiled_workflow
-
-
-def create_initial_state(
-    topic: str,
-    max_iterations: int = 3,
-) -> WorkflowState:
-    """
-    创建初始状态
-
-    Args:
-        topic: 写作主题
-        max_iterations: 最大迭代次数
-
-    Returns:
-        初始工作流状态
-    """
-    return {
-        "topic": topic,
-        "research_notes": [],
-        "draft_content": "",
-        "review_feedback": "",
-        "final_content": "",
-        "current_step": "research",
-        "iteration_count": 0,
-        "max_iterations": max_iterations,
-        "metadata": {},
-    }

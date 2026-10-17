@@ -4,7 +4,8 @@
 """
 
 from langchain_core.language_models import BaseChatModel
-from .base_agent import BaseAgent, AgentState
+
+from .base_agent import AgentState, BaseAgent
 
 
 class WriterAgent(BaseAgent):
